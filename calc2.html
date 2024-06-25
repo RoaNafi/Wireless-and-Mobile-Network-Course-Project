@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4G LTE System Calculator</title>
+    <style>
+        body {
+            font-family: "Kristen ITC", sans-serif;
+            background-color: #171920;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            background-color: #171920;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .container {
+            width: 90%; /* Adjusted for responsiveness */
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 50px;
+            border-radius: 8px;
+            text-align: center;
+            color: #fff;
+            background-color: #171920;
+            margin-top: 15%;
+            position: relative;
+        }
+        .output-section {
+            width: 45%; /* Adjust as needed */
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #ccc;
+            text-align: left; /* Align labels to the left */
+        }
+        .input-with-unit {
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .input-with-unit label {
+            font-weight: bold;
+            color: #ccc;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            font-size: 18px;
+            box-sizing: border-box;
+            background-color: #222831;
+            color: #fff;
+            outline: none;
+        }
+        input::placeholder {
+            color: #ccc; /* Placeholder text color */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #76ABAEFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px; /* Adjust spacing */
+            margin-bottom: 10%;
+            pointer-events: none; /* Initially disable pointer events */
+            opacity: 0.5; /* Reduce opacity */
+        }
+        button.enabled {
+            pointer-events: auto; /* Enable pointer events */
+            opacity: 1; /* Restore opacity */
+        }
+        button:hover {
+            background-color: #4c7174;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #fff;
+            text-align: center; /* Align results to the left */
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        /* project title and authors style */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 97%;
+            background-color: #171920;
+            padding: 10px 20px;
+            text-align: -moz-right;
+            color: #898585;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .footer span.name {
+            color: rgba(255, 215, 0, 0.53);
+        }
+        .input-field {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        /* Table styles */
+        table {
+            width: 100%; /* Set table width to fill container */
+            border-collapse: collapse; /* Collapse borders */
+            margin-top: 20px; /* Add some spacing above the table */
+
+        }
+
+
+        th, td {
+            border: 1px solid #76ABAEFF; /* Light blue border for readability */
+            padding: 8px; /* Padding for table cells */
+            text-align: left; /* Align text to the left */
+            color: #fff; /* White text color */
+        }
+
+        th {
+            background-color: #4c7174; /* Darker header background */
+            color: #fff; /* White text color for header */
+        }
+
+        tr:nth-child(even) {
+            background-color: #2e353d; /* Slightly lighter row color for even rows */
+        }
+
+        tr:hover {
+            background-color: #1d242a; /* Row highlight on mouse over */
+        }
+
+
+        /* Media query for smaller screens */
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column; /* Stack elements vertically on smaller screens */
+                align-items: center; /* Center items vertically */
+                margin-top: 50%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>4G LTE System Calculator</h1>
+</header>
+
+<div class="container">
+    <div class="input-section">
+
+        <label for="bandwidth">Bandwidth:</label>
+        <div class="input-with-unit">
+            <div class="input-field">
+                <input type="number" id="bandwidth" placeholder="e.g., 180" min="0">
+                <select id="bandwidthUnit">
+                    <option value="Hz">Hz</option>
+                    <option value="kHz" selected>kHz</option>
+                    <option value="MHz">MHz</option>
+                    <option value="GHz">GHz</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="input-with-unit">
+            <label for="subcarrierSpacing">Subcarrier Spacing:</label>
+            <div class="input-field">
+                <input type="number" id="subcarrierSpacing" placeholder="e.g., 15" min="0">
+                <select id="subcarrierSpacingUnit">
+                    <option value="Hz">Hz</option>
+                    <option value="kHz" selected>kHz</option>
+                    <option value="MHz">MHz</option>
+                    <option value="GHz">GHz</option>
+                </select>
+            </div>
+
+        </div>
+
+
+        <label for="ofdmSymbols">Number of OFDM Symbols per Resource Block:</label>
+        <input type="number" id="ofdmSymbols" placeholder="e.g., 7" min="0">
+
+
+
+
+        <div class="input-with-unit">
+            <label for="resourceBlockDuration">Duration of Resource Block:</label>
+            <div class="input-field">
+                <input type="number" id="resourceBlockDuration" step="0.01" placeholder="e.g., 0.5" min="0">
+                <select id="resourceBlockDurationUnit">
+                    <option value="sec">sec</option>
+                    <option value="msec" selected>msec</option>
+                    <option value="microsec">microsec</option>
+                </select>
+            </div>
+
+        </div>
+
+        <label for="qamModulation">QAM Modulation (e.g., 1024):</label>
+        <input type="number" id="qamModulation" placeholder="e.g., 1024" min="0">
+
+        <label for="parallelBlocks">Number of Parallel Resource Blocks:</label>
+        <input type="number" id="parallelBlocks" placeholder="e.g., 4" min="0">
+
+        <button id="calculateButton" onclick="calculate()">Calculate</button>
+    </div>
+
+    <div class="output-section">
+        <label for="resultUnit">Result Unit:</label>
+        <select id="resultUnit" onchange="displayResults()">
+            <option value="bps">bps</option>
+            <option value="kbps">kbps</option>
+            <option value="Mbps" selected>Mbps</option>
+            <option value="Gbps">Gbps</option>
+        </select>
+        <div class="result" id="results"></div>
+    </div>
+</div>
+
+<div class="footer">
+    Wireless and Mobile Network Course Project<br>
+    by <span class="name">Ro'a Nafi</span> and <span class="name">Alaa Shaheen</span>
+</div>
+
+<script>
+    let calcResults = {};
+
+    // Function to check if all input fields are filled with valid numbers
+    function checkInputs() {
+        const bandwidth = document.getElementById('bandwidth').value.trim();
+        const subcarrierSpacing = document.getElementById('subcarrierSpacing').value.trim();
+        const ofdmSymbols = document.getElementById('ofdmSymbols').value.trim();
+        const resourceBlockDuration = document.getElementById('resourceBlockDuration').value.trim();
+        const qamModulation = document.getElementById('qamModulation').value.trim();
+        const parallelBlocks = document.getElementById('parallelBlocks').value.trim();
+
+        // Enable or disable the button based on input validity
+        const calculateButton = document.getElementById('calculateButton');
+        if (bandwidth !== '' && subcarrierSpacing !== '' && ofdmSymbols !== '' &&
+            resourceBlockDuration !== '' && qamModulation !== '' && parallelBlocks !== '' &&
+            !isNaN(bandwidth) && !isNaN(subcarrierSpacing) && !isNaN(ofdmSymbols) &&
+            !isNaN(resourceBlockDuration) && !isNaN(qamModulation) && !isNaN(parallelBlocks) &&
+            parseFloat(bandwidth) >= 0 && parseFloat(subcarrierSpacing) >= 0 && parseInt(ofdmSymbols) >= 0 &&
+            parseFloat(resourceBlockDuration) >= 0 && parseInt(qamModulation) >= 0 && parseInt(parallelBlocks) >= 0) {
+            calculateButton.classList.add('enabled');
+        } else {
+            calculateButton.classList.remove('enabled');
+        }
+    }
+
+    // Attach event listeners to input fields to check dynamically
+    document.getElementById('bandwidth').addEventListener('input', checkInputs);
+    document.getElementById('subcarrierSpacing').addEventListener('input', checkInputs);
+    document.getElementById('ofdmSymbols').addEventListener('input', checkInputs);
+    document.getElementById('resourceBlockDuration').addEventListener('input', checkInputs);
+    document.getElementById('qamModulation').addEventListener('input', checkInputs);
+    document.getElementById('parallelBlocks').addEventListener('input', checkInputs);
+
+    function convertToBaseUnit(value, unit) {
+        switch (unit) {
+            case 'kHz':
+                return value * 1e3;
+            case 'MHz':
+                return value * 1e6;
+            case 'GHz':
+                return value * 1e9;
+            case 'msec':
+                return value * 1e-3;
+            case 'microsec':
+                return value * 1e-6;
+            default:
+                return value;
+        }
+    }
+
+    function convertTransmissionRateToUnit(value, unit) {
+        switch (unit) {
+            case 'kbps':
+                return value / 1e3;
+            case 'Mbps':
+                return value / 1e6;
+            case 'Gbps':
+                return value / 1e9;
+            default:
+                return value;
+        }
+    }
+
+    function isPowerOfTwo(value) {
+        return (Math.log2(value) % 1 === 0);
+    }
+
+    function lteSystemCalculator(bandwidth, subcarrierSpacing, ofdmSymbols, resourceBlockDuration, qamModulation, parallelBlocks) {
+
+        if (!isPowerOfTwo(qamModulation) && bandwidth % subcarrierSpacing !== 0) {
+            return { error: 'QAM Modulation must be a power of 2 (e.g., 1024).</br></br>Bandwidth must be divisible by Subcarrier Spacing without a remainder.' };
+        }
+
+        else if (!isPowerOfTwo(qamModulation)) {
+            return { error: 'QAM Modulation must be a power of 2 (e.g., 1024).' };
+        }
+
+        else if (bandwidth % subcarrierSpacing !== 0) {
+            return { error: 'Bandwidth must be divisible by Subcarrier Spacing without a remainder.' };
+        }
+
+        // Calculate the number of bits per resource element
+        const bitsPerResourceElement = Math.log2(qamModulation);
+
+        // Calculate the number of subcarriers
+        const numSubcarriers = bandwidth / subcarrierSpacing;
+
+        // Calculate the number of bits per OFDM symbol
+        const bitsPerOFDMSymbol = numSubcarriers * bitsPerResourceElement;
+
+        // Calculate the number of bits per OFDM resource block
+        const bitsPerResourceBlock = ofdmSymbols * bitsPerOFDMSymbol;
+
+        // Calculate the maximum transmission rate for the user
+        const bitsPerFourResourceBlocks = parallelBlocks * bitsPerResourceBlock;
+        const transmissionRate = bitsPerFourResourceBlocks / resourceBlockDuration; // Convert ms to seconds
+
+        return {
+            bitsPerResourceElement: bitsPerResourceElement,
+            bitsPerOFDMSymbol: bitsPerOFDMSymbol,
+            bitsPerResourceBlock: bitsPerResourceBlock,
+            transmissionRate: transmissionRate // in bps
+        };
+    }
+
+    function calculate() {
+        let bandwidth = parseFloat(document.getElementById('bandwidth').value);
+        const bandwidthUnit = document.getElementById('bandwidthUnit').value;
+        let subcarrierSpacing = parseFloat(document.getElementById('subcarrierSpacing').value);
+        const subcarrierSpacingUnit = document.getElementById('subcarrierSpacingUnit').value;
+        const ofdmSymbols = parseInt(document.getElementById('ofdmSymbols').value);
+        let resourceBlockDuration = parseFloat(document.getElementById('resourceBlockDuration').value);
+        const resourceBlockDurationUnit = document.getElementById('resourceBlockDurationUnit').value;
+        const qamModulation = parseInt(document.getElementById('qamModulation').value);
+        const parallelBlocks = parseInt(document.getElementById('parallelBlocks').value);
+
+        // Convert inputs to base units
+        bandwidth = convertToBaseUnit(bandwidth, bandwidthUnit);
+        subcarrierSpacing = convertToBaseUnit(subcarrierSpacing, subcarrierSpacingUnit);
+        resourceBlockDuration = convertToBaseUnit(resourceBlockDuration, resourceBlockDurationUnit);
+
+        if (
+            isNaN(bandwidth) || isNaN(subcarrierSpacing) || isNaN(ofdmSymbols) ||
+            isNaN(resourceBlockDuration) || isNaN(qamModulation) || isNaN(parallelBlocks) ||
+            bandwidth < 0 || subcarrierSpacing < 0 || ofdmSymbols < 0 ||
+            resourceBlockDuration < 0 || qamModulation < 0 || parallelBlocks < 0
+        ) {
+            document.getElementById('results').innerHTML = '<p class="error">All input fields must be filled with non-negative numbers.</p>';
+            return;
+        }
+
+        const results = lteSystemCalculator(bandwidth, subcarrierSpacing, ofdmSymbols, resourceBlockDuration, qamModulation, parallelBlocks);
+
+        if (results.error) {
+            document.getElementById('results').innerHTML = `<br/><p><span class="error">ERROR...</span><br/> ${results.error}</p><br/>`;
+
+        } else {
+            calcResults = results;
+            displayResults();
+        }
+    }
+
+    function displayResults() {
+        const resultUnit = document.getElementById('resultUnit').value;
+        const transmissionRate = convertTransmissionRateToUnit(calcResults.transmissionRate, resultUnit);
+
+        document.getElementById('results').innerHTML = `
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Bits per Resource Element</td>
+                <td>${calcResults.bitsPerResourceElement}</td>
+            </tr>
+            <tr>
+                <td>Bits per OFDM Symbol</td>
+                <td>${calcResults.bitsPerOFDMSymbol}</td>
+            </tr>
+            <tr>
+                <td>Bits per OFDM Resource Block</td>
+                <td>${calcResults.bitsPerResourceBlock}</td>
+            </tr>
+            <tr>
+                <td>Maximum Transmission Rate</td>
+                <td>${transmissionRate.toFixed(2)} ${resultUnit}</td>
+            </tr>
+
+
+        </table>
+    `;
+
+
+    }
+</script>
+
+</body>
+</html>

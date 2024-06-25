@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Page</title>
+    <style>
+        /* background style */
+        body {
+            font-family: "Kristen ITC", sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #171920;
+            margin: 0;
+            position: relative;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 10px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 60px; /* Adjusted margin for button container */
+        }
+        /* button style */
+        button {
+            font-family: "Kristen ITC", sans-serif;
+            padding: 15px 30px; /* Increased padding for larger buttons */
+            font-size: 18px; /* Slightly larger font size */
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #31363f; /* All buttons same color */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            width: 500px; /* Width of the buttons */
+            text-align: center; /* Center text in buttons */
+        }
+        button:hover {
+            transform: scale(1.05);
+            background-color: #76ABAE;
+        }
+        /* project title and authors style */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 97%;
+            background-color: #171920;
+            padding: 10px 20px;
+            text-align: -moz-right;
+            color: #898585;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .footer span.name {
+            color: rgba(255, 215, 0, 0.53);
+        }
+    </style>
+</head>
+<body>
+
+<h1>Calculators Menu</h1>
+<div class="button-container">
+    <button id="option1">Communication System</button>
+    <button id="option2">4G LTE System</button>
+    <button id="option3">Transmit Power</button>
+    <button id="option4">Multiple Access techniques</button>
+    <button id="option5">Cellular System Design</button>
+</div>
+
+<div class="footer">
+    Wireless and Mobile Network Course Project<br>
+    by <span class="name">Ro'a Nafi</span> and <span class="name">Alaa Shaheen</span>
+</div>
+
+
+<script>
+    document.getElementById('option1').addEventListener('click', function() {
+        window.location.href = 'calc1.html';
+    });
+    document.getElementById('option2').addEventListener('click', function() {
+        window.location.href = 'calc2.html';
+    });
+    document.getElementById('option3').addEventListener('click', function() {
+        window.location.href = 'calc3.html';
+    });
+    document.getElementById('option4').addEventListener('click', function() {
+        window.location.href = 'calc4.html';
+    });
+    document.getElementById('option5').addEventListener('click', function() {
+        window.location.href = 'calc5.html';
+    });
+</script>
+
+</body>
+</html>

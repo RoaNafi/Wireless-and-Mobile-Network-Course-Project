@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Multiple Access techniques</title>
+    <style>
+        body {
+            font-family: "Kristen ITC", sans-serif;
+            background-color: #171920;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure full viewport height */
+            color: #fff;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            background-color: #171920;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .container {
+            width: 90%; /* Adjusted for responsiveness */
+            max-width: 1000px; /* Limit maximum width */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #fff;
+            background-color: #171920;
+            margin-top: 120px;
+            position: relative;
+        }
+        .input-section {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .input-with-unit {
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .input-with-unit label {
+            font-weight: bold;
+            color: #ccc;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        .input-field {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input, select {
+            width: 100%; /* Full width for responsiveness */
+            height: 40px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            font-size: 18px;
+            box-sizing: border-box;
+            background-color: #31363f;
+            color: #fff;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #76ABAEFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            margin-bottom: 10%;
+            pointer-events: none;
+            opacity: 0.5;
+            width: 100%; /* Full width for responsiveness */
+        }
+        button.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+        button:hover {
+            background-color: #4c7174;
+        }
+        .output-section {
+            width: 45%; /* Adjust width as needed */
+            background-color: #171920;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .result {
+            background-color: #171920;
+            font-size: 16px;
+            color: #fff;
+            text-align: center;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 97%;
+            background-color: #171920;
+            padding: 10px 20px;
+            text-align: -moz-right;
+            color: #898585;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .footer span.name {
+            color: rgba(255, 215, 0, 0.53);
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        /* Table styles */
+        table {
+            width: 100%; /* Set table width to fill container */
+            border-collapse: collapse; /* Collapse borders */
+            /* Add some spacing above the table */
+            margin-bottom: 10%;
+        }
+
+        th, td {
+            border: 1px solid #76ABAEFF; /* Light blue border for readability */
+            padding: 8px; /* Padding for table cells */
+            text-align: left; /* Align text to the left */
+            color: #fff; /* White text color */
+        }
+
+        th {
+            background-color: #4c7174; /* Darker header background */
+            color: #fff; /* White text color for header */
+        }
+
+        tr:nth-child(even) {
+            background-color: #2e353d; /* Slightly lighter row color for even rows */
+        }
+
+        tr:hover {
+            background-color: #1d242a; /* Row highlight on mouse over */
+        }
+        /* Media query for smaller screens */
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column; /* Stack elements vertically on smaller screens */
+                align-items: center; /* Center items vertically */
+            }
+
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Throughput Calculator</h1>
+</header>
+
+<div class="container">
+    <div class="input-section">
+        <div class="input-with-unit">
+            <label for="csmaType">CSMA Type:</label>
+            <select class="type" id="csmaType">
+                <option value="nonpersistent">Unslotted Nonpersistent CSMA</option>
+                <option value="unslotted1persistent">unslotted 1-persistent CSMA</option>
+                <option value="slotted1persistent">slotted 1-persistent CSMA</option>
+            </select>
+        </div>
+
+        <div class="input-with-unit">
+            <label for="rate">Data Transmission Rate:</label>
+            <div class="input-field">
+                <input type="number" id="rate">
+                <select class="unit-select" id="rateUnit">
+                    <option value="bps" selected>bps</option>
+                    <option value="Kbps">Kbps</option>
+                    <option value="Mbps">Mbps</option>
+                    <option value="Gbps">Gbps</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-with-unit">
+            <label for="propagation">Propagation Time:</label>
+            <div class="input-field">
+                <input type="number" id="propagation">
+                <select class="unit-select" id="propagationUnit">
+                    <option value="sec" selected>sec</option>
+                    <option value="ms">ms</option>
+                    <option value="µs">µs</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-with-unit">
+            <label for="framesize">Frame Size:</label>
+            <div class="input-field">
+                <input type="number" id="framesize">
+                <select class="unit-select" id="framesizeUnit">
+                    <option value="bit" selected>bit</option>
+                    <option value="Kbit">Kbit</option>
+                    <option value="Mbit">Mbit</option>
+                    <option value="Gbit">Gbit</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-with-unit">
+            <label for="framerate">Frame Rate:</label>
+            <div class="input-field">
+                <input type="number" id="framerate">
+                <select class="unit-select" id="framerateUnit">
+                    <option value="fps" selected>fps</option>
+                    <option value="Kfps">Kfps</option>
+                    <option value="Mfps">Mfps</option>
+                    <option value="Gfps">Gfps</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="calculateButton" onclick="calculate()">Calculate Throughput</button>
+    </div>
+
+    <div class="output-section">
+        <div class="result" id="results"> </div>
+    </div>
+</div>
+
+<div class="footer">
+    Wireless and Mobile Network Course Project<br>
+    by <span class="name">Ro'a Nafi</span> and <span class="name">Alaa Shaheen</span>
+</div>
+
+<script>
+    function checkInputs() {
+        const rate = document.getElementById('rate').value.trim();
+        const propagation = document.getElementById('propagation').value.trim();
+        const framesize = document.getElementById('framesize').value.trim();
+        const framerate = document.getElementById('framerate').value.trim();
+
+        const calculateButton = document.getElementById('calculateButton');
+        if (rate !== '' && propagation !== '' && framesize !== '' && framerate !== '' &&
+            !isNaN(rate) && !isNaN(propagation) && !isNaN(framesize) && !isNaN(framerate)) {
+            calculateButton.classList.add('enabled');
+        } else {
+            calculateButton.classList.remove('enabled');
+        }
+    }
+
+    document.getElementById('rate').addEventListener('input', checkInputs);
+    document.getElementById('propagation').addEventListener('input', checkInputs);
+    document.getElementById('framesize').addEventListener('input', checkInputs);
+    document.getElementById('framerate').addEventListener('input', checkInputs);
+
+    function calculate() {
+        const csmaType = document.getElementById('csmaType').value;
+        const rate = parseFloat(document.getElementById('rate').value);
+        const rateUnit = document.getElementById('rateUnit').value;
+        const propagation = parseFloat(document.getElementById('propagation').value);
+        const propagationUnit = document.getElementById('propagationUnit').value;
+        const framesize = parseFloat(document.getElementById('framesize').value);
+        const framesizeUnit = document.getElementById('framesizeUnit').value;
+        const framerate = parseFloat(document.getElementById('framerate').value);
+        const framerateUnit = document.getElementById('framerateUnit').value;
+
+        if (isNaN(rate) || isNaN(propagation) || isNaN(framesize) || isNaN(framerate)) {
+            document.getElementById('results').innerHTML = '<p class="error">All input fields must be filled with valid numbers.</p>';
+            return;
+        }
+
+        const units = {
+            bps: 0,
+            Kbps: 3,
+            Mbps: 6,
+            Gbps: 9,
+            sec: 0,
+            ms: -3,
+            µs: -6,
+            bit: 0,
+            Kbit: 3,
+            Mbit: 6,
+            Gbit: 9,
+            fps: 0,
+            Kfps: 3,
+            Mfps: 6,
+            Gfps: 9
+        };
+
+        const rateBps = rate * Math.pow(10, units[rateUnit]);
+        const propagationSec = propagation * Math.pow(10, units[propagationUnit]);
+        const framesizeBit = framesize * Math.pow(10, units[framesizeUnit]);
+        const framerateFps = framerate * Math.pow(10, units[framerateUnit]);
+
+        let Tb, Tframe, G, alpha, throughput;
+
+        if (csmaType === 'nonpersistent') {
+            // Calculate throughput for unslotted nonpersistent CSMA
+            Tb = (1 / rateBps).toFixed(10);
+            Tframe = framesizeBit * Tb;
+            G = framerateFps * Tframe;
+            alpha = propagationSec / Tframe;
+
+            throughput = (G * Math.exp(-2 * alpha * Tb)) / ((G * (1 + 2 * alpha)) + Math.exp(-alpha * G));
+        } else if (csmaType === 'unslotted1persistent') {
+
+            // Calculate throughput for 1-persistent CSMA
+            Tb = (1 / rateBps).toFixed(10);
+            Tframe = framesizeBit * Tb;
+            G = framerateFps * Tframe;
+            alpha = propagationSec / Tframe;
+            numerator = G * (1 + G + alpha * G * (1 + G + (alpha * G / 2))) * Math.exp(-G * (1 + alpha));
+            denominator = (G * (1 + 2 * alpha)) - ((1 - Math.exp(-2 * alpha * G))) + ((1 + alpha * G) * Math.exp(-G * (1 + alpha)));
+            throughput = numerator / denominator;
+
+        } else if (csmaType === 'slotted1persistent') {
+            Tb = (1 / rateBps).toFixed(10);
+            Tframe = framesizeBit * Tb;
+            G = framerateFps * Tframe;
+            alpha = propagationSec / Tframe;
+            numerator = G * (1 + alpha - Math.exp(-alpha * G)) * Math.exp(-G * (1 + alpha));
+            denominator = (1 + alpha) * (1 - Math.exp(-alpha * G)) + alpha * Math.exp(-G * (1 + alpha));
+            throughput = numerator / denominator;
+        }
+        document.getElementById('results').innerHTML = `
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Period of One Bit</td>
+                <td>${Tb} sec</td>
+            </tr>
+            <tr>
+                <td>Period of One Frame</td>
+                <td>${Tframe} sec</td>
+            </tr>
+
+            <tr>
+                <td>G</td>
+                <td>${G}</td>
+            </tr>
+            <tr>
+                <td>Alpha</td>
+                <td>${alpha}</td>
+            </tr>
+            <tr>
+                <td>Throughput</td>
+                <td>${(throughput * 100).toFixed(2)}%</td>
+            </tr>
+
+
+        </table>
+    `;
+    }
+
+</script>
+
+</body>
+</html>

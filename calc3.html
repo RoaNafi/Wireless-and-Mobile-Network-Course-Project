@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transmit Power Calculator</title>
+    <style>
+        body {
+            font-family: "Kristen ITC", sans-serif;
+            background-color: #171920;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure full viewport height */
+            color: #fff;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            background-color: #171920;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .container {
+            width: 90%; /* Adjusted for responsiveness */
+            max-width: 1000px; /* Limit maximum width */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 50px;
+            border-radius: 8px;
+            text-align: center;
+            color: #fff;
+            background-color: #171920;
+            margin-top: 60px;
+            position: relative;
+        }
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            width: 45%; /* Adjust width as needed */
+        }
+        .input-with-unit {
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .input-with-unit label {
+            font-weight: bold;
+            color: #ccc;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        .input-field {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input, select {
+            width: 100%; /* Full width for responsiveness */
+            height: 40px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            font-size: 18px;
+            box-sizing: border-box;
+            background-color: #31363f;
+            color: #fff;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #76ABAEFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px; /* Adjust spacing */
+            pointer-events: none; /* Initially disable pointer events */
+            opacity: 0.5; /* Reduce opacity */
+        }
+        button.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+        button:hover {
+            background-color: #4c7174;
+        }
+        .output-section {
+            width: 45%; /* Adjust width as needed */
+            background-color: #171920;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .result {
+            background-color: #171920;
+            font-size: 16px;
+            color: #fff;
+            text-align: center;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #171920;
+            padding: 10px 20px;
+            text-align: -moz-right;
+            color: #898585;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .footer span.name {
+            color: rgba(255, 215, 0, 0.53);
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column; /* Stack elements vertically on smaller screens */
+                align-items: center; /* Center items vertically */
+            }
+        }
+    </style>
+    <script>
+        const modulationData = {
+            '16-PSK': [
+                { EbNo: 0, BER: 0.45 }, { EbNo: 1, BER: 0.4 }, { EbNo: 2, BER: 0.35 }, { EbNo: 3, BER: 0.3 },
+                { EbNo: 4, BER: 0.25 }, { EbNo: 5, BER: 0.2 }, { EbNo: 6, BER: 0.15 }, { EbNo: 7, BER: 0.1 },
+                { EbNo: 8, BER: 0.07 }, { EbNo: 9, BER: 0.05 }, { EbNo: 10, BER: 0.03 }, { EbNo: 11, BER: 0.01 },
+                { EbNo: 12, BER: 0.009 }, { EbNo: 13, BER: 0.005 }, { EbNo: 14, BER: 0.001 }, { EbNo: 15, BER: 0.0003 },
+                { EbNo: 16, BER: 0.0001 }, { EbNo: 17, BER: 0.00004 }, { EbNo: 18, BER: 0.000003 }
+            ],
+            '8-PSK': [
+                { EbNo: 0, BER: 0.25 }, { EbNo: 1, BER: 0.2 }, { EbNo: 2, BER: 0.1 }, { EbNo: 3, BER: 0.08 },
+                { EbNo: 4, BER: 0.06 }, { EbNo: 5, BER: 0.04 }, { EbNo: 6, BER: 0.02 }, { EbNo: 7, BER: 0.01 },
+                { EbNo: 8, BER: 0.008 }, { EbNo: 9, BER: 0.005 }, { EbNo: 10, BER: 0.001 }, { EbNo: 11, BER: 0.0003 },
+                { EbNo: 12, BER: 0.00008 }, { EbNo: 13, BER: 0.00001 }, { EbNo: 14, BER: 0.000001 }, { EbNo: 15, BER: 0.0000005 }
+            ],
+            'BPSK/QPSK': [
+                { EbNo: 0, BER: 0.1 }, { EbNo: 1, BER: 0.08 }, { EbNo: 2, BER: 0.06 }, { EbNo: 3, BER: 0.04 },
+                { EbNo: 4, BER: 0.01 }, { EbNo: 5, BER: 0.008 }, { EbNo: 6, BER: 0.004 }, { EbNo: 7, BER: 0.001 },
+                { EbNo: 8, BER: 0.0002 }, { EbNo: 9, BER: 0.00003 }, { EbNo: 10, BER: 0.000003 }, { EbNo: 11, BER: 0.0000004 },
+                { EbNo: 12, BER: 0.0000001 }
+            ]
+        };
+
+        function convertToDb(value, unit) {
+            if (unit === "dBm") {
+                return value - 30;
+            }
+            return value;
+        }
+
+        function convertToWatts(db) {
+            return Math.pow(10, db / 10) / 1000;
+        }
+
+        function calculatePr() {
+            const K = -228.6;  // Boltzmann constant in dB
+
+            let M = document.getElementById('M').value;
+            let T = document.getElementById('T').value;
+            let Nf = document.getElementById('Nf').value;
+            let R = document.getElementById('R').value;
+            let modulation = document.getElementById('modulation').value;
+            let BER = document.getElementById('BER').value;
+            let unitM = document.getElementById('unitM').value;
+            let unitT = document.getElementById('unitT').value;
+            let unitNf = document.getElementById('unitNf').value;
+            let unitR = document.getElementById('unitR').value;
+
+            if (M === "" || T === "" || Nf === "" || R === "" || modulation === "" || BER === "" || unitM === "" || unitT === "" || unitNf === "" || unitR === "") {
+                alert("Please fill in all fields for Pr calculation.");
+                return;
+            }
+
+            let Eb_N0 = getEbNo(modulation, BER);
+            if (Eb_N0 === null) {
+                alert("Invalid BER value for the selected modulation.");
+                return;
+            }
+
+            M = convertToDb(parseFloat(M), unitM);
+            T = convertToDb(parseFloat(T), unitT);
+            Nf = convertToDb(parseFloat(Nf), unitNf);
+            R = convertToDb(parseFloat(R), unitR);
+            Eb_N0 = parseFloat(Eb_N0);
+
+            let Pr_dB = M + K + T + Nf + R + Eb_N0;
+            let Pr_dBm = Pr_dB + 30;
+            let Pr_watts = convertToWatts(Pr_dBm);
+
+            document.getElementById('Pr_dB').value = Pr_dB.toFixed(2);
+            document.getElementById('Pr_dBm').value = Pr_dBm.toFixed(2);
+            document.getElementById('Pr_watts').value = Pr_watts.toExponential(2);
+            document.getElementById('Eb_N0_display').value = Eb_N0.toFixed(2);
+        }
+
+        function getEbNo(modulation, BER) {
+            let modulationTable = modulationData[modulation];
+            for (let i = 0; i < modulationTable.length; i++) {
+                if (modulationTable[i].BER <= parseFloat(BER)) {
+                    return modulationTable[i].EbNo;
+                }
+            }
+            return null;
+        }
+
+        function calculatePt() {
+            let Pr = document.getElementById('Pr_dB').value;
+            let Lp = document.getElementById('Lp').value;
+            let Lf = document.getElementById('Lf').value;
+            let Lo = document.getElementById('Lo').value;
+            let Fm = document.getElementById('Fm').value;
+            let Gt = document.getElementById('Gt').value;
+            let Gr = document.getElementById('Gr').value;
+            let At = document.getElementById('At').value;
+            let Ar = document.getElementById('Ar').value;
+            let unitLp = document.getElementById('unitLp').value;
+            let unitLf = document.getElementById('unitLf').value;
+            let unitLo = document.getElementById('unitLo').value;
+            let unitFm = document.getElementById('unitFm').value;
+            let unitGt = document.getElementById('unitGt').value;
+            let unitGr = document.getElementById('unitGr').value;
+            let unitAt = document.getElementById('unitAt').value;
+            let unitAr = document.getElementById('unitAr').value;
+
+            if (Pr === "" || Lp === "" || Lf === "" || Lo === "" || Fm === "" || Gt === "" || Gr === "" || At === "" || Ar === "" || unitLp === "" || unitLf === "" || unitLo === "" || unitFm === "" || unitGt === "" || unitGr === "" || unitAt === "" || unitAr === "") {
+                alert("Please fill in all fields for Pt calculation.");
+                return;
+            }
+
+            Pr = parseFloat(Pr);
+            Lp = convertToDb(parseFloat(Lp), unitLp);
+            Lf = convertToDb(parseFloat(Lf), unitLf);
+            Lo = convertToDb(parseFloat(Lo), unitLo);
+            Fm = convertToDb(parseFloat(Fm), unitFm);
+            Gt = convertToDb(parseFloat(Gt), unitGt);
+            Gr = convertToDb(parseFloat(Gr), unitGr);
+            At = convertToDb(parseFloat(At), unitAt);
+            Ar = convertToDb(parseFloat(Ar), unitAr);
+
+            let Pt_dB = Pr + Lp + Lf + Lo + Fm - Gt - Gr - At - Ar;
+            let Pt_dBm = Pt_dB + 30;
+            let Pt_watts = convertToWatts(Pt_dBm);
+
+            document.getElementById('Pt_dB').value = Pt_dB.toFixed(2);
+            document.getElementById('Pt_dBm').value = Pt_dBm.toFixed(2);
+            document.getElementById('Pt_watts').value = Pt_watts.toExponential(2);
+        }
+
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', () => {
+                const values = Array.from(document.querySelectorAll('input')).map(i => i.value.trim());
+                const allFilled = values.every(val => val !== '' && !isNaN(val));
+                const calculatePrButton = document.querySelector('#calculatePrButton');
+                const calculatePtButton = document.querySelector('#calculatePtButton');
+                if (allFilled) {
+                    calculatePrButton.classList.add('enabled');
+                    calculatePtButton.classList.add('enabled');
+                } else {
+                    calculatePrButton.classList.remove('enabled');
+                    calculatePtButton.classList.remove('enabled');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Transmit Power Calculator</h1>
+    </header>
+    <div class="container">
+        <div class="input-section">
+            <div class="input-with-unit">
+                <label for="modulation">Modulation:</label>
+                <div class="input-field">
+                    <select id="modulation">
+                        <option value="">Select Modulation</option>
+                        <option value="16-PSK">16-PSK</option>
+                        <option value="8-PSK">8-PSK</option>
+                        <option value="BPSK/QPSK">BPSK/QPSK</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="BER">BER:</label>
+                <div class="input-field">
+                    <input type="number" id="BER" step="0.000001" placeholder="e.g., 0.001">
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="M">M:</label>
+                <div class="input-field">
+                    <input type="number" id="M" placeholder="e.g., 8">
+                    <select id="unitM">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="T">T:</label>
+                <div class="input-field">
+                    <input type="number" id="T" placeholder="e.g., 24.6">
+                    <select id="unitT">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Nf">Nf:</label>
+                <div class="input-field">
+                    <input type="number" id="Nf" placeholder="e.g., 6">
+                    <select id="unitNf">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="R">R:</label>
+                <div class="input-field">
+                    <input type="number" id="R" placeholder="e.g., 39.8">
+                    <select id="unitR">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="calculatePrButton" class="enabled" onclick="calculatePr()">Calculate Pr</button>
+        </div>
+
+        <div class="input-section">
+            <div class="input-with-unit">
+                <label for="Lp">Lp:</label>
+                <div class="input-field">
+                    <input type="number" id="Lp" placeholder="e.g., 140">
+                    <select id="unitLp">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Lf">Lf:</label>
+                <div class="input-field">
+                    <input type="number" id="Lf" placeholder="e.g., 12">
+                    <select id="unitLf">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Lo">Lo:</label>
+                <div class="input-field">
+                    <input type="number" id="Lo" placeholder="e.g., 20">
+                    <select id="unitLo">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Fm">Fm:</label>
+                <div class="input-field">
+                    <input type="number" id="Fm" placeholder="e.g., 8">
+                    <select id="unitFm">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Gt">Gt:</label>
+                <div class="input-field">
+                    <input type="number" id="Gt" placeholder="e.g., 8">
+                    <select id="unitGt">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Gr">Gr:</label>
+                <div class="input-field">
+                    <input type="number" id="Gr" placeholder="e.g., 0">
+                    <select id="unitGr">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="At">At:</label>
+                <div class="input-field">
+                    <input type="number" id="At" placeholder="e.g., 0">
+                    <select id="unitAt">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-with-unit">
+                <label for="Ar">Ar:</label>
+                <div class="input-field">
+                    <input type="number" id="Ar" placeholder="e.g., 24">
+                    <select id="unitAr">
+                        <option value="dB">dB</option>
+                        <option value="dBm">dBm</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="calculatePtButton" class="enabled" onclick="calculatePt()">Calculate Pt</button>
+        </div>
+
+        <div class="output-section">
+            <div class="result">
+                <h2>Results:</h2>
+                <p>Eb/N0 (dB): <input type="number" id="Eb_N0_display" readonly></p>
+                <p>Pr (dB): <input type="number" id="Pr_dB" readonly></p>
+                <p>Pr (dBm): <input type="number" id="Pr_dBm" readonly></p>
+                <p>Pr (W): <input type="number" id="Pr_watts" readonly></p>
+                <p>Pt (dB): <input type="number" id="Pt_dB" readonly></p>
+                <p>Pt (dBm): <input type="number" id="Pt_dBm" readonly></p>
+                <p>Pt (W): <input type="number" id="Pt_watts" readonly></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Wireless and Mobile Network Course Project<br>
+        by <span class="name">Ro'a Nafi</span> and <span class="name">Alaa Shaheen</span>
+    </div>
+</body>
+</html>

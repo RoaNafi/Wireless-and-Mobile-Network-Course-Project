@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication System Calculator</title>
+    <style>
+        body {
+            font-family: "Kristen ITC", sans-serif;
+            background-color: #171920;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            background-color: #171920;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .container {
+            width: 90%; /* Adjusted for responsiveness */
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 50px;
+            border-radius: 8px;
+            text-align: center;
+            color: #fff;
+            background-color: #171920;
+            margin-top: 60px;
+            position: relative;
+        }
+        .output-section {
+            width: 45%; /* Adjust as needed */
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #ccc;
+            text-align: left; /* Align labels to the left */
+        }
+        .input-with-unit {
+            display: flex;
+            flex-direction: column;
+            justify-content: left;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .input-with-unit label {
+            font-weight: bold;
+            color: #ccc;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            font-size: 18px;
+            box-sizing: border-box;
+            background-color: #222831;
+            color: #fff;
+            outline: none;
+        }
+        input::placeholder {
+            color: #ccc; /* Placeholder text color */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #76ABAEFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px; /* Adjust spacing */
+            pointer-events: none; /* Initially disable pointer events */
+            opacity: 0.5; /* Reduce opacity */
+        }
+        button.enabled {
+            pointer-events: auto; /* Enable pointer events */
+            opacity: 1; /* Restore opacity */
+        }
+        button:hover {
+            background-color: #4c7174;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #fff;
+            text-align: center; /* Align results to the left */
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        /* project title and authors style */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 97%;
+            background-color: #171920;
+            padding: 10px 20px;
+            text-align: -moz-right;
+            color: #898585;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .footer span.name {
+            color: rgba(255, 215, 0, 0.53);
+        }
+        .input-field {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        /* Table styles */
+        table {
+            width: 100%; /* Set table width to fill container */
+            border-collapse: collapse; /* Collapse borders */
+            margin-top: 20px; /* Add some spacing above the table */
+        }
+
+        th, td {
+            border: 1px solid #76ABAEFF; /* Light blue border for readability */
+            padding: 8px; /* Padding for table cells */
+            text-align: left; /* Align text to the left */
+            color: #fff; /* White text color */
+        }
+
+        th {
+            background-color: #4c7174; /* Darker header background */
+            color: #fff; /* White text color for header */
+        }
+
+        tr:nth-child(even) {
+            background-color: #2e353d; /* Slightly lighter row color for even rows */
+        }
+
+        tr:hover {
+            background-color: #1d242a; /* Row highlight on mouse over */
+        }
+
+
+        /* Media query for smaller screens */
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column; /* Stack elements vertically on smaller screens */
+                align-items: center; /* Center items vertically */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Communication System Calculator</h1>
+</header>
+
+<div class="container">
+    <div >
+
+        <div class="input-with-unit">
+            <label for="bandwidth">Bandwidth:</label>
+            <div class="input-field">
+                <input type="number" id="bandwidth" placeholder="e.g., 4000" min="0">
+                <select id="bandwidthUnit">
+                    <option value="Hz">Hz</option>
+                    <option value="kHz">kHz</option>
+                    <option value="MHz">MHz</option>
+                    <option value="GHz">GHz</option>
+                </select>
+            </div>
+        </div>
+
+        <label for="quantizerBits">Quantizer Bits:</label>
+        <input type="number" id="quantizerBits" placeholder="e.g., 8" min="0">
+
+        <label for="sourceCompressionRate">Source Compression Rate:</label>
+        <input type="number" id="sourceCompressionRate" step="0.01" placeholder="e.g., 0.25" min="0">
+
+        <label for="channelEncoderRate">Channel Encoder Rate:</label>
+        <input type="number" id="channelEncoderRate" step="0.01" placeholder="e.g., 0.5" min="0">
+
+        <button id="calculateButton" onclick="calculate()">Calculate</button>
+    </div>
+
+    <div class="output-section">
+        <label for="resultUnit">Result Unit:</label>
+        <select id="resultUnit" onchange="displayResults()">
+            <option value="Hz">Hz</option>
+            <option value="kHz" selected>kHz</option>
+            <option value="MHz">MHz</option>
+            <option value="GHz">GHz</option>
+        </select>
+        <div class="result" id="results"></div>
+    </div>
+</div>
+
+<div class="footer">
+    Wireless and Mobile Network Course Project<br>
+    by <span class="name">Ro'a Nafi</span> and <span class="name">Alaa Shaheen</span>
+</div>
+
+<script>
+    let calcResults = {};
+
+    // Function to check if all input fields are filled with valid numbers
+    function checkInputs() {
+        const bandwidth = document.getElementById('bandwidth').value.trim();
+        const quantizerBits = document.getElementById('quantizerBits').value.trim();
+        const sourceCompressionRate = document.getElementById('sourceCompressionRate').value.trim();
+        const channelEncoderRate = document.getElementById('channelEncoderRate').value.trim();
+
+        // Enable or disable the button based on input validity
+        const calculateButton = document.getElementById('calculateButton');
+        if (bandwidth !== '' && quantizerBits !== '' && sourceCompressionRate !== '' && channelEncoderRate !== '' &&
+            !isNaN(bandwidth) && !isNaN(quantizerBits) && !isNaN(sourceCompressionRate) && !isNaN(channelEncoderRate) &&
+            parseFloat(bandwidth) >= 0 && parseInt(quantizerBits) >= 0 && parseFloat(sourceCompressionRate) >= 0 && parseFloat(channelEncoderRate) >= 0) {
+            calculateButton.classList.add('enabled');
+        } else {
+            calculateButton.classList.remove('enabled');
+        }
+    }
+
+    // Attach event listeners to input fields to check dynamically
+    document.getElementById('bandwidth').addEventListener('input', checkInputs);
+    document.getElementById('quantizerBits').addEventListener('input', checkInputs);
+    document.getElementById('sourceCompressionRate').addEventListener('input', checkInputs);
+    document.getElementById('channelEncoderRate').addEventListener('input', checkInputs);
+
+    function convertBandwidthToHz(bandwidth, unit) {
+        switch (unit) {
+            case 'kHz':
+                return bandwidth * 1e3;
+            case 'MHz':
+                return bandwidth * 1e6;
+            case 'GHz':
+                return bandwidth * 1e9;
+            default:
+                return bandwidth;
+        }
+    }
+
+    function convertToUnit(value, unit) {
+        switch (unit) {
+            case 'kHz':
+                return value / 1e3;
+            case 'MHz':
+                return value / 1e6;
+            case 'GHz':
+                return value / 1e9;
+            default:
+                return value;
+        }
+    }
+
+    function communicationSystemCalculator(bandwidth, quantizerBits, sourceCompressionRate, channelEncoderRate) {
+        const samplingFrequency = 2 * bandwidth;
+        const quantizationLevels = Math.pow(2, quantizerBits);
+        const inputBitRate = samplingFrequency * quantizerBits; // in bits per second
+        const sourceEncoderBitRate = inputBitRate * sourceCompressionRate;
+        const channelEncoderBitRate = sourceEncoderBitRate / channelEncoderRate;
+        const interleaverBitRate = channelEncoderBitRate;
+
+        return {
+            samplingFrequency: samplingFrequency,
+            quantizationLevels: quantizationLevels,
+            sourceEncoderBitRate: sourceEncoderBitRate,
+            channelEncoderBitRate: channelEncoderBitRate,
+            interleaverBitRate: interleaverBitRate
+        };
+    }
+
+    function calculate() {
+        let bandwidth = parseFloat(document.getElementById('bandwidth').value);
+        const bandwidthUnit = document.getElementById('bandwidthUnit').value;
+        const quantizerBits = parseInt(document.getElementById('quantizerBits').value);
+        const sourceCompressionRate = parseFloat(document.getElementById('sourceCompressionRate').value);
+        const channelEncoderRate = parseFloat(document.getElementById('channelEncoderRate').value);
+
+        // Convert bandwidth to Hz
+        bandwidth = convertBandwidthToHz(bandwidth, bandwidthUnit);
+
+        // Simple validation: Check if all fields are filled and are numbers
+        if (!bandwidth || !quantizerBits || !sourceCompressionRate || !channelEncoderRate ||
+            isNaN(bandwidth) || isNaN(quantizerBits) || isNaN(sourceCompressionRate) || isNaN(channelEncoderRate) ||
+            bandwidth < 0 || quantizerBits < 0 || sourceCompressionRate < 0 || channelEncoderRate < 0) {
+            alert('Please fill out all fields with valid non-negative numbers.');
+            return;
+        }
+
+        // Perform calculation
+        calcResults = communicationSystemCalculator(bandwidth, quantizerBits, sourceCompressionRate, channelEncoderRate);
+
+        // Display results
+        displayResults();
+    }
+
+    function displayResults() {
+        const resultUnit = document.getElementById('resultUnit').value;
+
+        const samplingFrequency = convertToUnit(calcResults.samplingFrequency, resultUnit);
+        const sourceEncoderBitRate = convertToUnit(calcResults.sourceEncoderBitRate, resultUnit);
+        const channelEncoderBitRate = convertToUnit(calcResults.channelEncoderBitRate, resultUnit);
+        const interleaverBitRate = convertToUnit(calcResults.interleaverBitRate, resultUnit);
+        const QuantizationLevels = calcResults.quantizationLevels;
+
+
+        document.getElementById('results').innerHTML = `
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Sampling Frequency</td>
+                <td>${samplingFrequency} ${resultUnit}</td>
+            </tr>
+            <tr>
+                <td>Quantization Levels</td>
+                <td>${QuantizationLevels}</td>
+            </tr>
+
+            <tr>
+                <td>Bit Rate at the Output of the Source Encoder</td>
+                <td>${sourceEncoderBitRate} ${resultUnit}</td>
+            </tr>
+            <tr>
+                <td>Bit Rate at the Output of the Channel Encoder</td>
+                <td>${channelEncoderBitRate} ${resultUnit}</td>
+            </tr>
+            <tr>
+                <td>Bit Rate at the Output of the Interleaver</td>
+                <td>${interleaverBitRate} ${resultUnit}</td>
+            </tr>
+
+
+        </table>
+    `;
+
+    }
+</script>
+
+</body>
+</html>
